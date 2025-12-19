@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ApiProj.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ApiProj.DTOs;
 

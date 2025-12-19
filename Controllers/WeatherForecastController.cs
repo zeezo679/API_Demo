@@ -1,4 +1,7 @@
+using ApiProj.Options;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace ApiProj.Controllers
 {
@@ -6,28 +9,32 @@ namespace ApiProj.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+       
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration; //bad design approach (no ISP or SOC)
+        private readonly WeatherAppOptions _weatherOptions;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IHttpClientFactory httpClientFactory, IConfiguration configuration, IOptionsSnapshot<WeatherAppOptions> weatherOptions)
         {
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
+            _weatherOptions = weatherOptions.Value;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet]
+        public async Task<String> Get(string cityName = "Egypt")
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            string? baseUrl = _weatherOptions.BaseUrl;
+            string? key = _weatherOptions.Key;
+
+            string url = $"{baseUrl}.json?key={key}&q={cityName}&aqi=no";
+
+            using var client = _httpClientFactory.CreateClient();
+
+            return await client.GetStringAsync(url);
         }
     }
 }

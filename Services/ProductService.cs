@@ -9,6 +9,7 @@ namespace ApiProj.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
+        
 
         public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository)
         {
@@ -18,34 +19,35 @@ namespace ApiProj.Services
 
         public ProductCreateDTO? AddProduct(ProductCreateDTO product)
         {
-            if (product is null)
-                return null;
+                if (product is null)
+                    return null;
 
-            var category = _categoryRepository.GetCategoryById(product.CategoryId);
-            if (category is null)
-                return null;
+                var category = _categoryRepository.GetCategoryById(product.CategoryId);
+                if (category is null)
+                    return null;
 
-            var productToAdd = new Product
-            {
-                Name = product.Name,
-                Price = product.Price,
-                CategoryId = category.Id,
-            };
+                var productToAdd = new Product
+                {
+                    Name = product.Name,
+                    Price = product.Price,
+                    CategoryId = category.Id,
+                };
 
-            _productRepository.AddProduct(productToAdd);
+                _productRepository.AddProduct(productToAdd);
 
-            return new ProductCreateDTO
-            {
-                Id = productToAdd.Id,
-                Name = productToAdd.Name,
-                Price = productToAdd.Price,
-                CategoryId = productToAdd.CategoryId
-            };
+                return new ProductCreateDTO
+                {
+                    Id = productToAdd.Id,
+                    Name = productToAdd.Name,
+                    Price = productToAdd.Price,
+                    CategoryId = productToAdd.CategoryId
+                };
         }
 
-        public List<Product> GetAllProducts()
+        public List<Product> GetAllProducts(PaginationFilter filter)
         {
-            throw new NotImplementedException();
+            var products = _productRepository.GetAllProducts(filter);
+            return products;
         }
 
         public ProductDTO? GetProductById(int id)
@@ -53,9 +55,14 @@ namespace ApiProj.Services
             throw new NotImplementedException();
         }
 
-        public ProductUpdateDTO? UpdateProduct(Product product)
+        public async Task<Product> UpdateProduct(int id, ProductUpdateDTO product)
         {
-            throw new NotImplementedException();
+            var updatedProduct = await _productRepository.UpdateProductAsync(id, product);
+
+            if (updatedProduct is null)
+                return null;
+
+            return updatedProduct;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ApiProj.Infrastructure;
+﻿using ApiProj.DTOs;
+using ApiProj.Infrastructure;
 using ApiProj.Interfaces;
 using ApiProj.Models;
 using Microsoft.EntityFrameworkCore;
@@ -21,16 +22,51 @@ namespace ApiProj.Repositories
             _context.SaveChanges();
         }
 
-        public List<Product> GetAllProducts()
+        public List<Product> GetAllProducts(PaginationFilter filter)
         {
-            var products = _context.Products.AsNoTracking().ToList();
+            var products = _context.Products
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .AsNoTracking()
+                .ToList();
+
             return products;
         }
 
         public Product? GetProductById(int id)
         {
-            var product = _context.Products.AsNoTracking().FirstOrDefault(p => p.Id == id);
+            var product = _context.Products
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Select(p => new Product
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    CategoryId = p.CategoryId,
+                    Category = p.Category
+                })
+                .FirstOrDefault(p => p.Id == id);
+
             return product;
+        }
+
+        public async Task<Product> UpdateProductAsync(int id, ProductUpdateDTO product)
+        {
+
+            if(product is null)
+            {
+                return null;
+            }
+
+            var productToUpdate = _context.Products.FirstOrDefault(p => p.Id == id);
+
+            productToUpdate.Name = product.Name;
+            productToUpdate.Price = product.Price;
+            productToUpdate.CategoryId = product.CategoryId;
+            
+            _context.SaveChanges();
+            return productToUpdate;
         }
     }
 }

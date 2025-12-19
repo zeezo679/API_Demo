@@ -5,9 +5,9 @@ namespace ApiProj.Interfaces
 {
     public interface IProductService
     {
-        List<Product> GetAllProducts();
+        List<Product> GetAllProducts(PaginationFilter filter);
         ProductDTO? GetProductById(int id);
         ProductCreateDTO? AddProduct(ProductCreateDTO product);
-        ProductUpdateDTO? UpdateProduct(Product product);
+        Task<Product> UpdateProduct(int id, ProductUpdateDTO productToUpdate);
     }
 }

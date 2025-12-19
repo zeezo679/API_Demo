@@ -1,6 +1,154 @@
 @ApiProj_HostAddress = http://localhost:5062
 
+### Weather Forecast - Get all
 GET {{ApiProj_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+############################################
+# Products Controller Endpoints
+############################################
+
+### Products - Get All (Default Pagination)
+GET {{ApiProj_HostAddress}}/api/products
+Accept: application/json
+
+###
+
+### Products - Get All (With Pagination Parameters)
+GET {{ApiProj_HostAddress}}/api/products?PageNumber=1&PageSize=10
+Accept: application/json
+
+###
+
+### Products - Get All (Page 2)
+GET {{ApiProj_HostAddress}}/api/products?PageNumber=2&PageSize=5
+Accept: application/json
+
+###
+
+### Products - Get By ID (Success - Replace {id} with actual product ID)
+GET {{ApiProj_HostAddress}}/api/products/1
+Accept: application/json
+
+###
+
+### Products - Get By ID (Not Found Example)
+GET {{ApiProj_HostAddress}}/api/products/9999
+Accept: application/json
+
+###
+
+### Products - Create New Product
+POST {{ApiProj_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Laptop",
+  "price": 899.99,
+  "categoryId": 1
+}
+
+###
+
+### Products - Create Another Product
+POST {{ApiProj_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Wireless Mouse",
+  "price": 29.99,
+  "categoryId": 1
+}
+
+###
+
+### Products - Create Product (Validation Error - Missing Name)
+POST {{ApiProj_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "price": 49.99,
+  "categoryId": 1
+}
+
+###
+
+### Products - Create Product (Validation Error - Price Out of Range)
+POST {{ApiProj_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Expensive Item",
+  "price": 1500.00,
+  "categoryId": 1
+}
+
+###
+
+### Products - Create Product (Bad Request - Invalid Category)
+POST {{ApiProj_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Test Product",
+  "price": 99.99,
+  "categoryId": 9999
+}
+
+###
+
+### Products - Update Product (Replace {id} with actual product ID)
+PUT {{ApiProj_HostAddress}}/api/products/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Updated Laptop Pro",
+  "price": 999.99,
+  "categoryId": 1
+}
+
+###
+
+### Products - Update Product (Not Found Example)
+PUT {{ApiProj_HostAddress}}/api/products/9999
+Content-Type: application/json
+
+{
+  "id": 9999,
+  "name": "Non-Existent Product",
+  "price": 49.99,
+  "categoryId": 1
+}
+
+###
+
+### Products - Update Product (Validation Error - Missing Required Fields)
+PUT {{ApiProj_HostAddress}}/api/products/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "price": 49.99
+}
+
+###
+
+### Products - Update Product (Validation Error - Price Out of Range)
+PUT {{ApiProj_HostAddress}}/api/products/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Test Product",
+  "price": -10.00,
+  "categoryId": 1
+}
+
+###
+````````
+
+
+# Response
